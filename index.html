@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Truth OS | 6-Layer Deterministic Glass Box Architecture</title>
+    <title>Truth OS | 6-Layer Deterministic Glass Box Operating System</title>
     <style>
         :root {
             --bg-color: #0b0f19;
             --card-bg: #111827;
             --accent-color: #00ffcc;
+            --danger-color: #ff4d4d;
+            --warning-color: #ffaa00;
             --text-main: #f3f4f6;
             --text-muted: #9ca3af;
             --border-color: #1f2937;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
@@ -22,20 +24,20 @@
             line-height: 1.6;
         }
         .container {
-            max-width: 900px;
+            max-width: 960px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 15px;
         }
         header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 35px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
         }
         h1 {
             color: var(--accent-color);
-            font-size: 2rem;
-            margin-bottom: 10px;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
         }
         .subtitle {
             color: var(--text-muted);
@@ -45,19 +47,80 @@
             display: inline-block;
             background: rgba(0, 255, 204, 0.1);
             color: var(--accent-color);
-            padding: 6px 14px;
+            padding: 6px 16px;
             border-radius: 20px;
             font-weight: bold;
             margin-top: 15px;
             border: 1px solid var(--accent-color);
         }
         .section-title {
-            font-size: 1.4rem;
-            margin-top: 30px;
+            font-size: 1.35rem;
+            margin-top: 35px;
             margin-bottom: 15px;
             border-left: 4px solid var(--accent-color);
-            padding-left: 10px;
+            padding-left: 12px;
+            font-weight: bold;
         }
+        /* Interactive Simulator Panel */
+        .simulator-box {
+            background-color: #0d1322;
+            border: 1px solid var(--accent-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.08);
+        }
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        button {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--accent-color);
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+        }
+        button:hover {
+            background-color: var(--accent-color);
+            color: #000;
+        }
+        button.danger-btn {
+            border-color: var(--danger-color);
+            color: var(--danger-color);
+        }
+        button.danger-btn:hover {
+            background-color: var(--danger-color);
+            color: #fff;
+        }
+        .console-output {
+            background-color: #05080f;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            font-family: "Courier New", Courier, monospace;
+            font-size: 0.85rem;
+            min-height: 180px;
+            max-height: 300px;
+            overflow-y: auto;
+            color: #a3be8c;
+        }
+        .log-entry {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #1a2234;
+            padding-bottom: 6px;
+        }
+        .log-error { color: var(--danger-color); }
+        .log-success { color: var(--accent-color); }
+        .log-warn { color: var(--warning-color); }
+        
+        /* Architecture Cards */
         .layer-grid {
             display: grid;
             gap: 15px;
@@ -66,28 +129,53 @@
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 20px;
-            transition: border-color 0.3s;
+            padding: 18px;
+            cursor: pointer;
+            transition: all 0.25s;
         }
         .layer-card:hover {
             border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+        .layer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .layer-number {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--accent-color);
             text-transform: uppercase;
             letter-spacing: 1px;
             font-weight: bold;
         }
+        .status-pill {
+            font-size: 0.75rem;
+            padding: 2px 8px;
+            border-radius: 12px;
+            background: rgba(0, 255, 204, 0.15);
+            color: var(--accent-color);
+        }
         .layer-title {
-            font-size: 1.2rem;
+            font-size: 1.15rem;
             font-weight: bold;
-            margin: 5px 0 10px 0;
+            margin: 6px 0 8px 0;
         }
         .layer-desc {
             color: var(--text-muted);
-            font-size: 0.95rem;
+            font-size: 0.92rem;
             margin: 0;
+        }
+        .layer-details {
+            display: none;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border-color);
+            font-size: 0.88rem;
+            color: #d1d5db;
+        }
+        .layer-card.active .layer-details {
+            display: block;
         }
         footer {
             text-align: center;
@@ -95,7 +183,7 @@
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
             color: var(--text-muted);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
         }
     </style>
 </head>
@@ -107,43 +195,99 @@
             <div class="axiom-badge">Core Axiom: 1 + 1 = 2 (Zero-Trust Mathematical Verification)</div>
         </header>
 
+        <!-- Interactive Glass Box Simulator -->
         <section>
-            <div class="section-title">System Architecture Overview</div>
-            <p>Truth OS eradicates black-box opacity and probabilistic bias in environmental monitoring by anchoring every telemetry stream directly to mathematical axioms, empirical satellite ground-truth, and cryptographic immutability.</p>
+            <div class="section-title">Interactive Glass Box Audit Simulator</div>
+            <div class="simulator-box">
+                <p style="margin-top: 0; color: var(--text-muted); font-size: 0.92rem;">
+                    Test the deterministic pipeline in real-time. Simulate valid NASA Sentinel-2 telemetry or inject tampered sensor data to observe automated Layer 5 Quarantine and Layer 4 Ed25519 block signing.
+                </p>
+                <div class="controls">
+                    <button onclick="simulateValidStream()">▶ Simulate Valid Sentinel-2 Stream</button>
+                    <button class="danger-btn" onclick="simulateTamperedStream()">⚠ Inject Tampered / Spoofed Data</button>
+                    <button onclick="verifyAxiom()">∑ Verify Axiomatic Core (1+1=2)</button>
+                    <button onclick="clearConsole()" style="border-color: #4b5563; color: #9ca3af;">Clear Log</button>
+                </div>
+                <div class="console-output" id="auditConsole">
+                    <div class="log-entry log-success">[SYSTEM READY] Truth OS Kernel v1.0.0-PROD initialized. Awaiting telemetry stream...</div>
+                </div>
+            </div>
         </section>
 
+        <!-- Interactive 6-Layer Architecture -->
         <section>
-            <div class="section-title">The 6-Layer Deterministic Stack</div>
+            <div class="section-title">The 6-Layer Deterministic Stack (Click layers to inspect specs)</div>
             <div class="layer-grid">
-                <div class="layer-card">
-                    <div class="layer-number">Layer 6</div>
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 6</span>
+                        <span class="status-pill">ACTIVE • PUBLIC AUDIT</span>
+                    </div>
                     <div class="layer-title">Glass Box Public Verification Dashboard</div>
                     <p class="layer-desc">Provides absolute public transparency, allowing citizens and scientists to audit telemetry audit trails and block validation in real-time.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Real-time WebSocket/REST gateway exposing raw block hashes, Ed25519 public keys, and CDFP metadata without black-box filtering.
+                    </div>
                 </div>
-                <div class="layer-card">
-                    <div class="layer-number">Layer 5</div>
+
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 5</span>
+                        <span class="status-pill">ARMED • ZERO-BIAS</span>
+                    </div>
                     <div class="layer-title">Automated Forensic & Quarantine Engine</div>
                     <p class="layer-desc">Continuously monitors anomaly detection and automatically isolates corrupted or tampered data streams into secure sandboxes without human bias.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Deterministic threshold & variance engine. Automatically flags anomalous spikes (Sensor Drift/Spoofing) and routes packets to isolated quarantine sandboxes with full forensic logs.
+                    </div>
                 </div>
-                <div class="layer-card">
-                    <div class="layer-number">Layer 4</div>
+
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 4</span>
+                        <span class="status-pill">LOCKED • ED25519</span>
+                    </div>
                     <div class="layer-title">Immutable Block Anchoring & Signatures (Ed25519)</div>
                     <p class="layer-desc">Locks milestone states using Ed25519 cryptographic signatures and hash-linked block chaining to guarantee non-repudiation and unalterable logs.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Uses high-speed Edwards-curve Digital Signature Algorithm (Ed25519) paired with SHA-256 block chaining to ensure any retroactive modification invalidates the chain immediately.
+                    </div>
                 </div>
-                <div class="layer-card">
-                    <div class="layer-number">Layer 3</div>
+
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 3</span>
+                        <span class="status-pill">SYNCED • SENTINEL-2</span>
+                    </div>
                     <div class="layer-title">Zero-Trust Empirical Binding</div>
                     <p class="layer-desc">Binds incoming data streams directly with physical ground-truth reference data streams, such as NASA/ESA Sentinel-2 satellite telemetry.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Cross-validates ground-level environmental telemetry against multi-spectral satellite observations (NDVI, thermal, atmospheric bands) at matching geospatial coordinates.
+                    </div>
                 </div>
-                <div class="layer-card">
-                    <div class="layer-number">Layer 2</div>
+
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 2</span>
+                        <span class="status-pill">STANDARD • CDFP v1</span>
+                    </div>
                     <div class="layer-title">Common Data-Financial Protocol (CDFP)</div>
                     <p class="layer-desc">Normalizes heterogeneous environmental streams into a unified JSON/Binary schema while attaching financial-grade governance metadata.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Enforces strict schema validation and binds physical metrics (e.g., CO2 ppm, surface temp) directly to carbon valuation and economic risk liabilities.
+                    </div>
                 </div>
-                <div class="layer-card">
-                    <div class="layer-number">Layer 1</div>
+
+                <div class="layer-card" onclick="toggleLayer(this)">
+                    <div class="layer-header">
+                        <span class="layer-number">Layer 1</span>
+                        <span class="status-pill">IMMUTABLE • 1+1=2</span>
+                    </div>
                     <div class="layer-title">Axiomatic Core (1 + 1 = 2)</div>
                     <p class="layer-desc">The immutable mathematical foundation ensuring all statistical computations and data logic adhere strictly to absolute deterministic rules.</p>
+                    <div class="layer-details">
+                        <strong>Technical Spec:</strong> Eliminates stochastic/probabilistic approximation in core state transitions. Every output is 100% reproducible given identical input vectors.
+                    </div>
                 </div>
             </div>
         </section>
@@ -152,5 +296,62 @@
             <p>Official NASA Space Apps Challenge 2026 Project | Hosted at btru-logic.earth</p>
         </footer>
     </div>
+
+    <script>
+        const consoleEl = document.getElementById('auditConsole');
+
+        function appendLog(message, type = '') {
+            const time = new Date().toISOString().split('T')[1].slice(0, 12);
+            const div = document.createElement('div');
+            div.className = 'log-entry ' + type;
+            div.innerHTML = `[${time}] ${message}`;
+            consoleEl.appendChild(div);
+            consoleEl.scrollTop = consoleEl.scrollHeight;
+        }
+
+        function generateMockHash() {
+            const chars = '0123456789abcdef';
+            let hash = '';
+            for (let i = 0; i < 64; i++) hash += chars[Math.floor(Math.random() * 16)];
+            return hash;
+        }
+
+        function simulateValidStream() {
+            const temp = (28.4 + (Math.random() * 0.6)).toFixed(2);
+            const ndvi = (0.72 + (Math.random() * 0.04)).toFixed(3);
+            const hash = generateMockHash();
+
+            appendLog(`<strong>[LAYER 2 - CDFP]</strong> Ingesting telemetry packet: { Temp: ${temp}°C, Sentinel2_NDVI: ${ndvi}, Carbon_Liability: "$14.20/t" }`);
+            setTimeout(() => {
+                appendLog(`<strong>[LAYER 3 - ZERO-TRUST]</strong> Ground-truth empirical binding verified against Sentinel-2 orbital pass. Variance: 0.01% (PASS)`, 'log-success');
+            }, 300);
+            setTimeout(() => {
+                appendLog(`<strong>[LAYER 4 - ED25519]</strong> Block signed & anchored. Hash: 0x${hash.slice(0, 24)}...`, 'log-success');
+            }, 600);
+        }
+
+        function simulateTamperedStream() {
+            const spoofedTemp = (94.8).toFixed(2);
+            appendLog(`<strong>[LAYER 2 - CDFP]</strong> Ingesting external sensor packet: { Temp: ${spoofedTemp}°C, Source: "Unverified_Node_09" }`, 'log-warn');
+            setTimeout(() => {
+                appendLog(`<strong>[LAYER 3 - ZERO-TRUST]</strong> CRITICAL MISMATCH: Ground reading (${spoofedTemp}°C) contradicts Sentinel-2 thermal band (28.6°C)!`, 'log-error');
+            }, 350);
+            setTimeout(() => {
+                appendLog(`<strong>[LAYER 5 - FORENSIC ENGINE]</strong> ANOMALY DETECTED! Stream isolated into QUARANTINE SANDBOX #Q-884. Zero-bias block rejection logged.`, 'log-error');
+            }, 700);
+        }
+
+        function verifyAxiom() {
+            appendLog(`<strong>[LAYER 1 - AXIOMATIC CORE]</strong> Executing deterministic integrity check: 1 + 1 === 2 -> TRUE. Zero probabilistic drift detected.`, 'log-success');
+        }
+
+        function clearConsole() {
+            consoleEl.innerHTML = '<div class="log-entry log-success">[SYSTEM READY] Audit console cleared. Ready for telemetry verification.</div>';
+        }
+
+        function toggleLayer(card) {
+            card.classList.toggle('active');
+        }
+    </script>
 </body>
 </html>

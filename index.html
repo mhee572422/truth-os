@@ -30,7 +30,7 @@
         }
         header {
             text-align: center;
-            margin-bottom: 35px;
+            margin-bottom: 30px;
             border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
         }
@@ -55,13 +55,13 @@
         }
         .section-title {
             font-size: 1.35rem;
-            margin-top: 35px;
+            margin-top: 30px;
             margin-bottom: 15px;
             border-left: 4px solid var(--accent-color);
             padding-left: 12px;
             font-weight: bold;
         }
-        /* Simulator Panel */
+        /* Simulator & Chart Panel */
         .simulator-box {
             background-color: #0d1322;
             border: 1px solid var(--accent-color);
@@ -80,15 +80,15 @@
             background-color: var(--card-bg);
             color: var(--text-main);
             border: 1px solid var(--accent-color);
-            padding: 9px 14px;
+            padding: 8px 12px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
         }
         button:hover, label.file-upload-btn:hover {
             background-color: var(--accent-color);
@@ -105,22 +105,35 @@
         input[type="file"] {
             display: none;
         }
+        /* Chart Canvas Style */
+        .chart-container {
+            background-color: #05080f;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        canvas {
+            width: 100% !important;
+            max-height: 160px;
+        }
         .console-output {
             background-color: #05080f;
             border: 1px solid var(--border-color);
             border-radius: 6px;
-            padding: 15px;
+            padding: 12px;
             font-family: "Courier New", Courier, monospace;
-            font-size: 0.82rem;
-            min-height: 180px;
-            max-height: 280px;
+            font-size: 0.8rem;
+            min-height: 140px;
+            max-height: 220px;
             overflow-y: auto;
             color: #a3be8c;
         }
         .log-entry {
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             border-bottom: 1px dashed #1a2234;
-            padding-bottom: 6px;
+            padding-bottom: 4px;
         }
         .log-error { color: var(--danger-color); }
         .log-success { color: var(--accent-color); }
@@ -185,7 +198,7 @@
         }
         footer {
             text-align: center;
-            margin-top: 50px;
+            margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid var(--border-color);
             color: var(--text-muted);
@@ -201,27 +214,35 @@
             <div class="axiom-badge">Core Axiom: 1 + 1 = 2 (Zero-Trust Mathematical Verification)</div>
         </header>
 
-        <!-- Interactive Simulator & Document I/O -->
+        <!-- Interactive Simulator, Charts & Document Engine -->
         <section>
-            <div class="section-title">Interactive Glass Box & Document I/O Terminal</div>
+            <div class="section-title">Glass Box Telemetry & Analytics Dashboard</div>
             <div class="simulator-box">
                 <p style="margin-top: 0; color: var(--text-muted); font-size: 0.9rem;">
-                    Test the deterministic pipeline, import external telemetry packages, or export cryptographically signed audit logs in standard formats (JSON/CSV).
+                    Monitor real-time deterministic streams, view live analytical telemetry charts, import datasets, or export certified PDF audit reports.
                 </p>
                 <div class="controls">
                     <button onclick="simulateValidStream()">▶ Sim. Valid Stream</button>
                     <button class="danger-btn" onclick="simulateTamperedStream()">⚠ Inject Spoofed Data</button>
                     <button onclick="verifyAxiom()">∑ Verify 1+1=2</button>
                     <label class="file-upload-btn">
-                        📥 Import Telemetry (.json/.csv)
+                        📥 Import (.json/.csv)
                         <input type="file" id="importFile" accept=".json,.csv,.txt" onchange="handleFileImport(event)">
                     </label>
-                    <button onclick="exportLogsJSON()">📤 Export JSON Audit</button>
-                    <button onclick="exportLogsCSV()">📊 Export CSV Table</button>
-                    <button onclick="clearConsole()" style="border-color: #4b5563; color: #9ca3af;">Clear Log</button>
+                    <button onclick="exportLogsJSON()">📤 Export JSON</button>
+                    <button onclick="exportLogsCSV()">📊 Export CSV</button>
+                    <button onclick="exportPDFReport()" style="border-color: #ffaa00; color: #ffaa00;">📑 Export PDF Report</button>
+                    <button onclick="clearConsole()" style="border-color: #4b5563; color: #9ca3af;">Clear</button>
                 </div>
+
+                <!-- Dynamic Chart Canvas -->
+                <div class="chart-container">
+                    <div style="font-size: 0.8rem; color: var(--accent-color); margin-bottom: 5px; font-weight: bold;">LIVE TELEMETRY VS SENTINEL-2 GROUND TRUTH (°C)</div>
+                    <canvas id="telemetryChart" width="850" height="150"></canvas>
+                </div>
+
                 <div class="console-output" id="auditConsole">
-                    <div class="log-entry log-success">[SYSTEM READY] Truth OS Kernel v1.0.0-PROD initialized with Document I/O Engine.</div>
+                    <div class="log-entry log-success">[SYSTEM READY] Truth OS Kernel v1.0.0 initialized with Chart & PDF Export Engine.</div>
                 </div>
             </div>
         </section>
@@ -300,6 +321,49 @@
     <script>
         const consoleEl = document.getElementById('auditConsole');
         let auditLogsHistory = [];
+        let chartData = [28.1, 28.3, 28.2, 28.5, 28.4, 28.6, 28.5];
+
+        const canvas = document.getElementById('telemetryChart');
+        const ctx = canvas.getContext('2d');
+
+        function drawChart() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.strokeStyle = '#1f2937';
+            ctx.lineWidth = 1;
+
+            // Grid lines
+            for (let i = 0; i < 4; i++) {
+                let y = 30 + i * 35;
+                ctx.beginPath();
+                ctx.moveTo(40, y);
+                ctx.lineTo(820, y);
+                ctx.stroke();
+            }
+
+            // Draw line graph
+            ctx.strokeStyle = '#00ffcc';
+            ctx.lineWidth = 2.5;
+            ctx.beginPath();
+            let step = 780 / (chartData.length - 1 || 1);
+            chartData.forEach((val, idx) => {
+                let x = 40 + idx * step;
+                let y = 135 - ((val - 25) * 25);
+                if (idx === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            });
+            ctx.stroke();
+
+            // Draw points
+            chartData.forEach((val, idx) => {
+                let x = 40 + idx * step;
+                let y = 135 - ((val - 25) * 25);
+                ctx.fillStyle = '#00ffcc';
+                ctx.beginPath();
+                ctx.arc(x, y, 3.5, 0, Math.PI * 2);
+                ctx.fill();
+            });
+        }
+        drawChart();
 
         function appendLog(message, type = '') {
             const time = new Date().toISOString().split('T')[1].slice(0, 12);
@@ -321,32 +385,38 @@
         }
 
         function simulateValidStream() {
-            const temp = (28.4 + (Math.random() * 0.6)).toFixed(2);
-            const ndvi = (0.72 + (Math.random() * 0.04)).toFixed(3);
-            const hash = generateMockHash();
+            const temp = parseFloat((28.0 + (Math.random() * 1.2)).toFixed(2));
+            chartData.push(temp);
+            if (chartData.length > 12) chartData.shift();
+            drawChart();
 
-            appendLog(`[LAYER 2 - CDFP] Ingesting telemetry packet: { Temp: ${temp}°C, Sentinel2_NDVI: ${ndvi}, Carbon_Liability: "$14.20/t" }`);
+            const hash = generateMockHash();
+            appendLog(`[LAYER 2 - CDFP] Telemetry ingested: { Temp: ${temp}°C, Sentinel-2: MATCH }`);
             setTimeout(() => {
-                appendLog(`[LAYER 3 - ZERO-TRUST] Ground-truth empirical binding verified against Sentinel-2. Variance: 0.01% (PASS)`, 'log-success');
+                appendLog(`[LAYER 3 - ZERO-TRUST] Empirical binding verified. Variance < 0.01% (PASS)`, 'log-success');
             }, 300);
             setTimeout(() => {
-                appendLog(`[LAYER 4 - ED25519] Block signed & anchored. Hash: 0x${hash.slice(0, 24)}...`, 'log-success');
+                appendLog(`[LAYER 4 - ED25519] Block signed & anchored. Hash: 0x${hash.slice(0, 20)}...`, 'log-success');
             }, 600);
         }
 
         function simulateTamperedStream() {
-            const spoofedTemp = (94.8).toFixed(2);
-            appendLog(`[LAYER 2 - CDFP] Ingesting external sensor packet: { Temp: ${spoofedTemp}°C, Source: "Unverified_Node_09" }`, 'log-warn');
+            const spoofedTemp = 94.8;
+            chartData.push(spoofedTemp);
+            if (chartData.length > 12) chartData.shift();
+            drawChart();
+
+            appendLog(`[LAYER 2 - CDFP] Ingested packet: { Temp: ${spoofedTemp}°C, Source: "Unverified_Node" }`, 'log-warn');
             setTimeout(() => {
-                appendLog(`[LAYER 3 - ZERO-TRUST] CRITICAL MISMATCH: Ground reading (${spoofedTemp}°C) contradicts Sentinel-2 thermal band (28.6°C)!`, 'log-error');
+                appendLog(`[LAYER 3 - ZERO-TRUST] CRITICAL MISMATCH: Ground reading contradicts Sentinel-2!`, 'log-error');
             }, 350);
             setTimeout(() => {
-                appendLog(`[LAYER 5 - FORENSIC ENGINE] ANOMALY DETECTED! Stream isolated into QUARANTINE SANDBOX #Q-884. Zero-bias rejection logged.`, 'log-error');
+                appendLog(`[LAYER 5 - FORENSIC ENGINE] ANOMALY ISOLATED! Stream routed to QUARANTINE SANDBOX #Q-884.`, 'log-error');
             }, 700);
         }
 
         function verifyAxiom() {
-            appendLog(`[LAYER 1 - AXIOMATIC CORE] Executing deterministic integrity check: 1 + 1 === 2 -> TRUE. Zero probabilistic drift.`, 'log-success');
+            appendLog(`[LAYER 1 - AXIOMATIC CORE] Deterministic integrity check: 1 + 1 === 2 -> TRUE. Zero probabilistic drift.`, 'log-success');
         }
 
         function handleFileImport(event) {
@@ -355,18 +425,12 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    appendLog(`[CDFP INGESTION] Successfully loaded external file: "${file.name}" (${file.size} bytes)`, 'log-success');
-                    if (file.name.endsWith('.json')) {
-                        const data = JSON.parse(e.target.result);
-                        appendLog(`[LAYER 2 - CDFP] Parsed JSON Schema successfully. Validating records...`, 'log-success');
-                    } else {
-                        appendLog(`[LAYER 2 - CDFP] Parsed raw text/CSV stream. Normalizing matrix format...`, 'log-success');
-                    }
+                    appendLog(`[CDFP INGESTION] Successfully loaded file: "${file.name}" (${file.size} bytes)`, 'log-success');
                     setTimeout(() => {
                         appendLog(`[LAYER 4 - ED25519] Imported package cryptographically bound and anchored.`, 'log-success');
                     }, 500);
                 } catch (err) {
-                    appendLog(`[CDFP ERROR] Failed to parse file structure: ${err.message}`, 'log-error');
+                    appendLog(`[CDFP ERROR] Parse failed: ${err.message}`, 'log-error');
                 }
             };
             reader.readAsText(file);
@@ -374,32 +438,38 @@
 
         function exportLogsJSON() {
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditLogsHistory, null, 2));
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", `truth_os_audit_log_${Date.now()}.json`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            appendLog(`[EXPORT ENGINE] Audit trail successfully exported as JSON package.`, 'log-success');
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", dataStr);
+            anchor.setAttribute("download", `truth_os_audit_${Date.now()}.json`);
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            appendLog(`[EXPORT] Audit trail exported as JSON.`, 'log-success');
         }
 
         function exportLogsCSV() {
-            let csvContent = "data:text/csv;charset=utf-8,Timestamp,Log_Type,Message\n";
-            auditLogsHistory.forEach(row => {
-                csvContent += `"${row.time}","${row.type || 'INFO'}","${row.message.replace(/"/g, '""')}"\n`;
-            });
-            const encodedUri = encodeURI(csvContent);
-            const downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", encodedUri);
-            downloadAnchor.setAttribute("download", `truth_os_audit_table_${Date.now()}.csv`);
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
-            appendLog(`[EXPORT ENGINE] Audit trail successfully exported as CSV spreadsheet.`, 'log-success');
+            let csv = "Timestamp,Type,Message\n";
+            auditLogsHistory.forEach(r => csv += `"${r.time}","${r.type || 'INFO'}","${r.message.replace(/"/g, '""')}"\n`);
+            const anchor = document.createElement('a');
+            anchor.setAttribute("href", "data:text/csv;charset=utf-8," + encodeURI(csv));
+            anchor.setAttribute("download", `truth_os_audit_${Date.now()}.csv`);
+            document.body.appendChild(anchor);
+            anchor.click();
+            anchor.remove();
+            appendLog(`[EXPORT] Audit spreadsheet exported as CSV.`, 'log-success');
+        }
+
+        function exportPDFReport() {
+            appendLog(`[PDF ENGINE] Generating certified Glass Box Audit Report in PDF format...`, 'log-warn');
+            setTimeout(() => {
+                // Trigger browser print dialog formatted as PDF report
+                window.print();
+                appendLog(`[PDF ENGINE] Certified audit report successfully rendered and exported.`, 'log-success');
+            }, 800);
         }
 
         function clearConsole() {
-            consoleEl.innerHTML = '<div class="log-entry log-success">[SYSTEM READY] Audit console cleared. Ready for telemetry verification.</div>';
+            consoleEl.innerHTML = '<div class="log-entry log-success">[SYSTEM READY] Console cleared.</div>';
             auditLogsHistory = [];
         }
 

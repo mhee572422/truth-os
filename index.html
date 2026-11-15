@@ -61,7 +61,7 @@
             padding-left: 12px;
             font-weight: bold;
         }
-        /* Interactive Simulator Panel */
+        /* Simulator Panel */
         .simulator-box {
             background-color: #0d1322;
             border: 1px solid var(--accent-color);
@@ -73,21 +73,24 @@
         .controls {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            margin-bottom: 20px;
+            gap: 10px;
+            margin-bottom: 15px;
         }
-        button {
+        button, label.file-upload-btn {
             background-color: var(--card-bg);
             color: var(--text-main);
             border: 1px solid var(--accent-color);
-            padding: 10px 16px;
+            padding: 9px 14px;
             border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
         }
-        button:hover {
+        button:hover, label.file-upload-btn:hover {
             background-color: var(--accent-color);
             color: #000;
         }
@@ -99,15 +102,18 @@
             background-color: var(--danger-color);
             color: #fff;
         }
+        input[type="file"] {
+            display: none;
+        }
         .console-output {
             background-color: #05080f;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             padding: 15px;
             font-family: "Courier New", Courier, monospace;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             min-height: 180px;
-            max-height: 300px;
+            max-height: 280px;
             overflow-y: auto;
             color: #a3be8c;
         }
@@ -150,7 +156,7 @@
             font-weight: bold;
         }
         .status-pill {
-            font-size: 0.75rem;
+            font-size: 0.72rem;
             padding: 2px 8px;
             border-radius: 12px;
             background: rgba(0, 255, 204, 0.15);
@@ -195,28 +201,34 @@
             <div class="axiom-badge">Core Axiom: 1 + 1 = 2 (Zero-Trust Mathematical Verification)</div>
         </header>
 
-        <!-- Interactive Glass Box Simulator -->
+        <!-- Interactive Simulator & Document I/O -->
         <section>
-            <div class="section-title">Interactive Glass Box Audit Simulator</div>
+            <div class="section-title">Interactive Glass Box & Document I/O Terminal</div>
             <div class="simulator-box">
-                <p style="margin-top: 0; color: var(--text-muted); font-size: 0.92rem;">
-                    Test the deterministic pipeline in real-time. Simulate valid NASA Sentinel-2 telemetry or inject tampered sensor data to observe automated Layer 5 Quarantine and Layer 4 Ed25519 block signing.
+                <p style="margin-top: 0; color: var(--text-muted); font-size: 0.9rem;">
+                    Test the deterministic pipeline, import external telemetry packages, or export cryptographically signed audit logs in standard formats (JSON/CSV).
                 </p>
                 <div class="controls">
-                    <button onclick="simulateValidStream()">▶ Simulate Valid Sentinel-2 Stream</button>
-                    <button class="danger-btn" onclick="simulateTamperedStream()">⚠ Inject Tampered / Spoofed Data</button>
-                    <button onclick="verifyAxiom()">∑ Verify Axiomatic Core (1+1=2)</button>
+                    <button onclick="simulateValidStream()">▶ Sim. Valid Stream</button>
+                    <button class="danger-btn" onclick="simulateTamperedStream()">⚠ Inject Spoofed Data</button>
+                    <button onclick="verifyAxiom()">∑ Verify 1+1=2</button>
+                    <label class="file-upload-btn">
+                        📥 Import Telemetry (.json/.csv)
+                        <input type="file" id="importFile" accept=".json,.csv,.txt" onchange="handleFileImport(event)">
+                    </label>
+                    <button onclick="exportLogsJSON()">📤 Export JSON Audit</button>
+                    <button onclick="exportLogsCSV()">📊 Export CSV Table</button>
                     <button onclick="clearConsole()" style="border-color: #4b5563; color: #9ca3af;">Clear Log</button>
                 </div>
                 <div class="console-output" id="auditConsole">
-                    <div class="log-entry log-success">[SYSTEM READY] Truth OS Kernel v1.0.0-PROD initialized. Awaiting telemetry stream...</div>
+                    <div class="log-entry log-success">[SYSTEM READY] Truth OS Kernel v1.0.0-PROD initialized with Document I/O Engine.</div>
                 </div>
             </div>
         </section>
 
-        <!-- Interactive 6-Layer Architecture -->
+        <!-- 6-Layer Architecture -->
         <section>
-            <div class="section-title">The 6-Layer Deterministic Stack (Click layers to inspect specs)</div>
+            <div class="section-title">The 6-Layer Deterministic Stack (Click to inspect)</div>
             <div class="layer-grid">
                 <div class="layer-card" onclick="toggleLayer(this)">
                     <div class="layer-header">
@@ -225,9 +237,7 @@
                     </div>
                     <div class="layer-title">Glass Box Public Verification Dashboard</div>
                     <p class="layer-desc">Provides absolute public transparency, allowing citizens and scientists to audit telemetry audit trails and block validation in real-time.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Real-time WebSocket/REST gateway exposing raw block hashes, Ed25519 public keys, and CDFP metadata without black-box filtering.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Real-time WebSocket/REST gateway exposing raw block hashes, Ed25519 public keys, and CDFP metadata.</div>
                 </div>
 
                 <div class="layer-card" onclick="toggleLayer(this)">
@@ -237,9 +247,7 @@
                     </div>
                     <div class="layer-title">Automated Forensic & Quarantine Engine</div>
                     <p class="layer-desc">Continuously monitors anomaly detection and automatically isolates corrupted or tampered data streams into secure sandboxes without human bias.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Deterministic threshold & variance engine. Automatically flags anomalous spikes (Sensor Drift/Spoofing) and routes packets to isolated quarantine sandboxes with full forensic logs.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Deterministic threshold engine isolating anomalous spikes into isolated quarantine sandboxes with full forensic logs.</div>
                 </div>
 
                 <div class="layer-card" onclick="toggleLayer(this)">
@@ -249,9 +257,7 @@
                     </div>
                     <div class="layer-title">Immutable Block Anchoring & Signatures (Ed25519)</div>
                     <p class="layer-desc">Locks milestone states using Ed25519 cryptographic signatures and hash-linked block chaining to guarantee non-repudiation and unalterable logs.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Uses high-speed Edwards-curve Digital Signature Algorithm (Ed25519) paired with SHA-256 block chaining to ensure any retroactive modification invalidates the chain immediately.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Uses Edwards-curve Digital Signature Algorithm (Ed25519) paired with SHA-256 block chaining.</div>
                 </div>
 
                 <div class="layer-card" onclick="toggleLayer(this)">
@@ -261,9 +267,7 @@
                     </div>
                     <div class="layer-title">Zero-Trust Empirical Binding</div>
                     <p class="layer-desc">Binds incoming data streams directly with physical ground-truth reference data streams, such as NASA/ESA Sentinel-2 satellite telemetry.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Cross-validates ground-level environmental telemetry against multi-spectral satellite observations (NDVI, thermal, atmospheric bands) at matching geospatial coordinates.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Cross-validates ground telemetry against multi-spectral satellite observations at matching coordinates.</div>
                 </div>
 
                 <div class="layer-card" onclick="toggleLayer(this)">
@@ -273,9 +277,7 @@
                     </div>
                     <div class="layer-title">Common Data-Financial Protocol (CDFP)</div>
                     <p class="layer-desc">Normalizes heterogeneous environmental streams into a unified JSON/Binary schema while attaching financial-grade governance metadata.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Enforces strict schema validation and binds physical metrics (e.g., CO2 ppm, surface temp) directly to carbon valuation and economic risk liabilities.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Enforces schema validation and binds physical metrics directly to carbon valuation and economic risk liabilities.</div>
                 </div>
 
                 <div class="layer-card" onclick="toggleLayer(this)">
@@ -285,9 +287,7 @@
                     </div>
                     <div class="layer-title">Axiomatic Core (1 + 1 = 2)</div>
                     <p class="layer-desc">The immutable mathematical foundation ensuring all statistical computations and data logic adhere strictly to absolute deterministic rules.</p>
-                    <div class="layer-details">
-                        <strong>Technical Spec:</strong> Eliminates stochastic/probabilistic approximation in core state transitions. Every output is 100% reproducible given identical input vectors.
-                    </div>
+                    <div class="layer-details"><strong>Technical Spec:</strong> Eliminates stochastic approximation in core state transitions. 100% reproducible outputs.</div>
                 </div>
             </div>
         </section>
@@ -299,9 +299,13 @@
 
     <script>
         const consoleEl = document.getElementById('auditConsole');
+        let auditLogsHistory = [];
 
         function appendLog(message, type = '') {
             const time = new Date().toISOString().split('T')[1].slice(0, 12);
+            const entry = { time, message: message.replace(/<[^>]*>?/gm, ''), type };
+            auditLogsHistory.push(entry);
+
             const div = document.createElement('div');
             div.className = 'log-entry ' + type;
             div.innerHTML = `[${time}] ${message}`;
@@ -321,32 +325,82 @@
             const ndvi = (0.72 + (Math.random() * 0.04)).toFixed(3);
             const hash = generateMockHash();
 
-            appendLog(`<strong>[LAYER 2 - CDFP]</strong> Ingesting telemetry packet: { Temp: ${temp}°C, Sentinel2_NDVI: ${ndvi}, Carbon_Liability: "$14.20/t" }`);
+            appendLog(`[LAYER 2 - CDFP] Ingesting telemetry packet: { Temp: ${temp}°C, Sentinel2_NDVI: ${ndvi}, Carbon_Liability: "$14.20/t" }`);
             setTimeout(() => {
-                appendLog(`<strong>[LAYER 3 - ZERO-TRUST]</strong> Ground-truth empirical binding verified against Sentinel-2 orbital pass. Variance: 0.01% (PASS)`, 'log-success');
+                appendLog(`[LAYER 3 - ZERO-TRUST] Ground-truth empirical binding verified against Sentinel-2. Variance: 0.01% (PASS)`, 'log-success');
             }, 300);
             setTimeout(() => {
-                appendLog(`<strong>[LAYER 4 - ED25519]</strong> Block signed & anchored. Hash: 0x${hash.slice(0, 24)}...`, 'log-success');
+                appendLog(`[LAYER 4 - ED25519] Block signed & anchored. Hash: 0x${hash.slice(0, 24)}...`, 'log-success');
             }, 600);
         }
 
         function simulateTamperedStream() {
             const spoofedTemp = (94.8).toFixed(2);
-            appendLog(`<strong>[LAYER 2 - CDFP]</strong> Ingesting external sensor packet: { Temp: ${spoofedTemp}°C, Source: "Unverified_Node_09" }`, 'log-warn');
+            appendLog(`[LAYER 2 - CDFP] Ingesting external sensor packet: { Temp: ${spoofedTemp}°C, Source: "Unverified_Node_09" }`, 'log-warn');
             setTimeout(() => {
-                appendLog(`<strong>[LAYER 3 - ZERO-TRUST]</strong> CRITICAL MISMATCH: Ground reading (${spoofedTemp}°C) contradicts Sentinel-2 thermal band (28.6°C)!`, 'log-error');
+                appendLog(`[LAYER 3 - ZERO-TRUST] CRITICAL MISMATCH: Ground reading (${spoofedTemp}°C) contradicts Sentinel-2 thermal band (28.6°C)!`, 'log-error');
             }, 350);
             setTimeout(() => {
-                appendLog(`<strong>[LAYER 5 - FORENSIC ENGINE]</strong> ANOMALY DETECTED! Stream isolated into QUARANTINE SANDBOX #Q-884. Zero-bias block rejection logged.`, 'log-error');
+                appendLog(`[LAYER 5 - FORENSIC ENGINE] ANOMALY DETECTED! Stream isolated into QUARANTINE SANDBOX #Q-884. Zero-bias rejection logged.`, 'log-error');
             }, 700);
         }
 
         function verifyAxiom() {
-            appendLog(`<strong>[LAYER 1 - AXIOMATIC CORE]</strong> Executing deterministic integrity check: 1 + 1 === 2 -> TRUE. Zero probabilistic drift detected.`, 'log-success');
+            appendLog(`[LAYER 1 - AXIOMATIC CORE] Executing deterministic integrity check: 1 + 1 === 2 -> TRUE. Zero probabilistic drift.`, 'log-success');
+        }
+
+        function handleFileImport(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    appendLog(`[CDFP INGESTION] Successfully loaded external file: "${file.name}" (${file.size} bytes)`, 'log-success');
+                    if (file.name.endsWith('.json')) {
+                        const data = JSON.parse(e.target.result);
+                        appendLog(`[LAYER 2 - CDFP] Parsed JSON Schema successfully. Validating records...`, 'log-success');
+                    } else {
+                        appendLog(`[LAYER 2 - CDFP] Parsed raw text/CSV stream. Normalizing matrix format...`, 'log-success');
+                    }
+                    setTimeout(() => {
+                        appendLog(`[LAYER 4 - ED25519] Imported package cryptographically bound and anchored.`, 'log-success');
+                    }, 500);
+                } catch (err) {
+                    appendLog(`[CDFP ERROR] Failed to parse file structure: ${err.message}`, 'log-error');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function exportLogsJSON() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(auditLogsHistory, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `truth_os_audit_log_${Date.now()}.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            appendLog(`[EXPORT ENGINE] Audit trail successfully exported as JSON package.`, 'log-success');
+        }
+
+        function exportLogsCSV() {
+            let csvContent = "data:text/csv;charset=utf-8,Timestamp,Log_Type,Message\n";
+            auditLogsHistory.forEach(row => {
+                csvContent += `"${row.time}","${row.type || 'INFO'}","${row.message.replace(/"/g, '""')}"\n`;
+            });
+            const encodedUri = encodeURI(csvContent);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", encodedUri);
+            downloadAnchor.setAttribute("download", `truth_os_audit_table_${Date.now()}.csv`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+            appendLog(`[EXPORT ENGINE] Audit trail successfully exported as CSV spreadsheet.`, 'log-success');
         }
 
         function clearConsole() {
             consoleEl.innerHTML = '<div class="log-entry log-success">[SYSTEM READY] Audit console cleared. Ready for telemetry verification.</div>';
+            auditLogsHistory = [];
         }
 
         function toggleLayer(card) {

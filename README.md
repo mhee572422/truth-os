@@ -41,3 +41,54 @@ truth-os/
 │   ├── cdfp_simulator.py   # Core CDFP protocol & logical verification engine
 │   └── validator.py        # Empirical evidence binding simulator
 └── LICENSE                 # Open-source governance license
+
++-----------------------------------------------------------------------+
+│                      TRUTH OS: 6-LAYER ARCHITECTURE                   │
+│             "Replacing black-box trust with 1+1=2 Axiom"              │
++-----------------------------------------------------------------------+
+                                   │
+         ┌─────────────────────────┴─────────────────────────┐
+         ▼                                                   ▼
++---------------------------------+  +---------------------------------+
+│ LAYER 1: Axiomatic Core ($1+1=2)│  │ LAYER 2: CDFP Protocol          │
+│ - Strict Mathematical Logic     │  │ - Unified Data Structure        │
+│ - Provable Outcomes             │  │ - Financial & Admin Standards   │
++---------------------------------+  +---------------------------------+
+         │                                                   │
+         └─────────────────────────┬─────────────────────────┘
+                                   ▼
++-----------------------------------------------------------------------+
+│ LAYER 3: Zero-Trust Empirical Binding (`empirical_proof_ref`)         │
+│ - Cryptographic binding to physical ground-truth data                 │
+│ - Sentinel-2 Satellite Telemetry & IoT Sensor Streams                 │
++-----------------------------------------------------------------------+
+                                   │
+                                   ▼
++-----------------------------------------------------------------------+
+│ LAYER 4: Immutable Block Anchoring & Signatures                       │
+│ - Ed25519 Cryptographic Signatures                                    │
+│ - Tamper-proof verifiable ledgers                                     │
++-----------------------------------------------------------------------+
+                                   │
+                                   ▼
++-----------------------------------------------------------------------+
+│ LAYER 5: Automated Forensic & Quarantine Engine                       │
+│ - Real-time anomaly & fraud detection                                 │
+│ - Zero human-intervention bias isolation                              │
++-----------------------------------------------------------------------+
+                                   │
+                                   ▼
++-----------------------------------------------------------------------+
+│ LAYER 6: Glass Box Public Verification Dashboard                      │
+│ - Public auditing interface (`https://btru-logic.earth`)              │
+│ - Independent verification proofs                                     │
++-----------------------------------------------------------------------+
+                                   │
+         ┌─────────────────────────┴─────────────────────────┐
+         ▼                                                   ▼
++---------------------------------+  +---------------------------------+
+│ INFRASTRUCTURE LAYER            │  │ AI & GOVERNANCE LAYER           │
+│ - GitHub: mhee572422/truth-os   │  │ - `battwo-logics-agent`         │
+│ - Hosting: Vercel               │  │ - GitHub App Manifest           │
++---------------------------------+  +---------------------------------+
+
